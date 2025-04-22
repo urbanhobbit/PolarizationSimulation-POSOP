@@ -4,7 +4,7 @@
 
 The Agent-Based Polarisation Simulation Dashboard is a Streamlit-based tool designed to model opinion dynamics in a 2D opinion space. It simulates how agents interact, form preferences, and evolve their opinions over time, allowing users to analyze polarization, voting behavior, and social choice outcomes. The dashboard provides interactive visualizations, parameter controls, and result export options to facilitate research and analysis of social dynamics.
 
-This manual is for version `app_final_v06.py` (updated April 21, 2025), which includes features like selective export of saved simulations and a downloadable user manual.
+This manual is for version `app_final_v06.py` (updated April 22, 2025), which includes features like selective export of saved simulations, a downloadable user manual, and a dedicated tab for social choice results.
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ This manual is for version `app_final_v06.py` (updated April 21, 2025), which in
   - `plotly==5.22.0`
   - `xlsxwriter==3.2.0`
   - `openpyxl==3.1.5`
-- **Project Files**: Place `app_final_v06.py`, `agents.py`, `scenarios.py`, `config.py`, `polarisation.py`, and `deliberation.py` in the same directory.
+- **Project Files**: Place `app_final_v06.py`, `agents.py`, `scenarios.py`, `config.py`, `polarisation.py`, `deliberation.py`, and `ui_components.py` in the same directory.
 - **Run the App**: Execute the following command in your terminal:
   ```
   streamlit run app_final_v06.py
@@ -25,24 +25,24 @@ This manual is for version `app_final_v06.py` (updated April 21, 2025), which in
 
 ### Dashboard Layout
 - **Sidebar**: Contains simulation controls, results management, documentation, and advanced settings.
-- **Main Interface**: Displays simulation results in three tabs (Scatter Animation, Polarisation Metrics, Voting Results) and a section for downloading individual result tables.
-- **Screenshot Placeholder**: [Insert a screenshot of the dashboard’s home screen showing the sidebar and main interface.]
+- **Main Interface**: Displays simulation results in four tabs (Scatter Animation, Polarisation Metrics, Voting Results, and Social Choice Results) and a section for downloading individual result tables.
+- **Screenshot Placeholder**: [Insert a screenshot of the dashboard's home screen showing the sidebar and the four-tab interface.]
 
 ## Simulation Settings
 
-The sidebar’s "Simulation Settings" section allows you to configure the simulation parameters.
+The sidebar's "Simulation Settings" section allows you to configure the simulation parameters.
 
-- **Select Scenario for Delta Matrix**:
-  - Choose a predefined scenario (e.g., "Scenario 1 - Ideal World") from the dropdown to set the interaction matrix (`delta_matrix`).
-  - Scenarios define how agents with different preference profiles interact.
 - **Party Positions**:
-  - Select "Preset Scenario" to use party positions from the chosen scenario.
-  - Select "Manual Entry" to define 2–5 parties with custom X and Y coordinates using sliders.
+  - Select "Preset Scenario" to use a predefined scenario and its party positions.
+  - Select "Manual Entry" to define 2-5 parties with custom X and Y coordinates.
+- **Delta Matrix**:
+  - If using a preset scenario, the delta matrix is loaded from the scenario.
+  - If using manual entry, a default identity matrix is used.
 - **Sliders**:
-  - **Animation Speed (ms)**: Adjust the speed of the animation (100–2000 ms, default: 500 ms).
-  - **Number of Agents**: Set the number of agents (50–2000, default: 200).
-  - **Number of Iterations**: Set the total iterations (50–1000, default: 300).
-  - **Number of Frames**: Set the number of animation frames (10–100, default: 30).
+  - **Animation Speed (ms)**: Adjust the speed of the animation (100-2000 ms, default: 500 ms).
+  - **Number of Agents**: Set the number of agents (50-2000, default: 200).
+  - **Number of Iterations**: Set the total iterations (50-1000, default: 300).
+  - **Number of Frames**: Set the number of animation frames (10-100, default: 30).
 - **View Selected Configuration**:
   - Expand this section to see the party positions and delta matrix as tables.
   - **Screenshot Placeholder**: [Insert a screenshot of the expanded "View Selected Configuration" section showing the party positions and delta matrix tables.]
@@ -50,15 +50,15 @@ The sidebar’s "Simulation Settings" section allows you to configure the simula
 ### Running the Simulation
 - **Start**: Click the "▶️ Start" button to run the simulation with the configured parameters.
 - **Stop/Cancel**: Click "⏹️ Stop/Cancel" to interrupt the simulation or clear results.
-- **Reset Parameters**: Click "🔄 Reset Parameters" to revert to default settings (200 agents, 300 iterations, 30 frames, 500 ms animation speed).
+- **Reset Parameters**: Click "🔄 Reset Parameters" to revert to default settings (200 agents, 300 iterations, 30 frames, 500 ms animation speed). This will also clear the cache to ensure consistency.
 
 ## Visualizations
 
-After running a simulation, results are displayed in three tabs in the main interface.
+After running a simulation, results are displayed in four tabs in the main interface.
 
 ### Tab 1: Scatter Animation
 - Displays an interactive animation of agents, party positions, party centers, and the society center in a 2D opinion space.
-- **Agents**: Represented as colored dots based on their first-choice party.
+- **Agents**: Represented as colored dots based on their first-choice party, using a vibrant color palette (e.g., blue, red, green).
 - **Party Positions**: Shown as stars.
 - **Party Centers**: Shown as diamonds, indicating the mean position of agents supporting each party.
 - **Society Center**: Shown as a black square, representing the mean position of all agents.
@@ -74,9 +74,14 @@ After running a simulation, results are displayed in three tabs in the main inte
 - **Party Support Over Time**: Line plot showing the voting share of each party over iterations. Use the dropdown to switch between parties or view all.
 - **Final Support Distribution**: Bar chart showing the final voting share of each party.
 - **Preference Profile Distribution**: Line plot showing the distribution of preference profiles over time.
-- **Social Choice Results**: Line plots for social choice winners (Plurality, Borda, Majority Comparison, Copeland) and their scores over time.
-- **Final Social Choice Winners**: Table listing the final winners under each rule.
-- **Screenshot Placeholder**: [Insert a screenshot of the Voting Results tab showing the party support plot and final winners table.]
+- **Screenshot Placeholder**: [Insert a screenshot of the Voting Results tab showing the party support plot and final support distribution.]
+
+### Tab 4: Social Choice Results
+- Displays visualizations for social choice outcomes under Plurality, Borda, Majority Comparison, and Copeland rules, using a distinct color palette (e.g., light green, orange, pink) for parties to differentiate from other tabs.
+- **Winners Over Time**: Step plot showing the winning party for each rule over iterations. Use the dropdown to switch between rules or view all. Colors reflect the winning party.
+- **Scores Across Rules and Parties**: Heatmap showing scores for each party under each rule over time. Each party is represented by a unique color, with score intensity shown as white opacity.
+- **Final Scores Comparison**: Bar chart comparing final scores for each party across rules, with party-specific colors.
+- **Screenshot Placeholder**: [Insert a screenshot of the Social Choice Results tab showing the step plot, heatmap, and bar chart.]
 
 ## Results Management
 
@@ -101,7 +106,7 @@ The "Results Management" section in the sidebar allows you to save, export, and 
     - Polarization metrics (`_polar`)
     - Voting results (`_voting`)
     - Social choice results (`_social`)
-  - **Note**: Sheet names are truncated to fit Excel’s 31-character limit (e.g., `Scenario 1 - Ideal W_party_pos`).
+  - **Note**: Sheet names are truncated to fit Excel's 31-character limit (e.g., `Scenario 1 - Ideal W_party_pos`).
 - **Screenshot Placeholder**: [Insert a screenshot of the "Results Management" expander showing the checkboxes and export button.]
 
 ### Clearing Saved Simulations
@@ -124,7 +129,7 @@ The "Results Management" section in the sidebar allows you to save, export, and 
 
 ## Advanced Controls
 - Expand the "Advanced Controls" section in the sidebar.
-- Click "🧹 Clear Cache" to clear the app’s cache and refresh the simulation.
+- Click "🧹 Clear Cache" to clear the app's cache and refresh the simulation.
 
 ## Troubleshooting
 - **Excel Export Fails**: If the export fails, ensure `xlsxwriter` or `openpyxl` is installed:
@@ -134,7 +139,8 @@ The "Results Management" section in the sidebar allows you to save, export, and 
   ```
 - **Slow Performance**: For large simulations (e.g., 2000 agents, 1000 iterations), reduce the number of agents, iterations, or frames to improve performance.
 - **Animation Not Displaying**: Ensure the simulation has completed successfully. Check the progress bar and status messages in the main interface.
-- **MATLAB Alignment Issues**: Compare `agents.positions` and `agents.pref_indices` with MATLAB’s `cagentnew` and `pprofshnew` using identical inputs to ensure consistency.
+- **Simulation Fails**: Check for errors in the sidebar (e.g., mismatched delta matrix dimensions) and adjust parameters accordingly. If the error persists, try clearing the cache using the "Advanced Controls" section.
+- **MATLAB Alignment Issues**: Compare `agents.positions` and `agents.pref_indices` with MATLAB's `cagentnew` and `pprofshnew` using identical inputs to ensure consistency.
 
 ## Contact and Support
 For additional support, please contact the developer at [insert contact information]. Provide details about your issue, including any error messages and the simulation parameters used.
