@@ -520,36 +520,22 @@ def render_visualizations(positions_record, polarisation_df, voting_df, social_c
                 })
         score_df = pd.concat([pd.DataFrame(d) for d in score_data])
         score_pivot = score_df.pivot_table(index=["Rule", "Party"], columns="Iteration", values="Score")
-        # Create custom colors for each Rule-Party combination
         y_labels = [f"{rule} - {party}" for rule, party in score_pivot.index]
-        heatmap_colors = []
-        for rule, party in score_pivot.index:
-            party_idx = int(party.split()[-1]) - 1
-            heatmap_colors.append(social_choice_colors[party_idx])
+        # Create customdata with party colors
+        heatmap_colors = [social_choice_colors[int(party.split()[-1]) - 1] for rule, party in score_pivot.index]
+        customdata = np.array([heatmap_colors] * score_pivot.shape[1]).T  # Shape: (N_rows, N_iterations)
         fig_heatmap = go.Figure(data=go.Heatmap(
             z=score_pivot.values,
             x=score_pivot.columns,
             y=y_labels,
-            colorscale=[[0, "rgba(255,255,255,0.1)"], [1, "rgba(255,255,255,1)"]],
-            zmin=score_pivot.values.min(),
-            zmax=score_pivot.values.max(),
+            colorscale="Viridis",
             showscale=True,
             text=score_pivot.values.round(2),
             texttemplate="%{text}",
-            textfont=dict(color="black"),
-            customdata=np.stack([np.full_like(score_pivot.values, c) for c in heatmap_colors], axis=-1),
+            textfont=dict(color="white"),
+            customdata=customdata,
             hovertemplate="Iteration: %{x}<br>Rule-Party: %{y}<br>Score: %{z}<br>Color: %{customdata}<extra></extra>"
         ))
-        # Apply background colors to cells
-        for i, color in enumerate(heatmap_colors):
-            fig_heatmap.add_trace(go.Heatmap(
-                z=np.full_like(score_pivot.values[i:i+1], 1),
-                x=score_pivot.columns,
-                y=[y_labels[i]],
-                colorscale=[[0, color], [1, color]],
-                showscale=False,
-                hoverinfo="skip"
-            ))
         fig_heatmap.update_layout(
             xaxis_title="Iteration",
             yaxis_title="Rule - Party",
